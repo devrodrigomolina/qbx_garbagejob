@@ -58,6 +58,7 @@ lib.callback.register("garbagejob:server:NextStop", function(source, currentStop
     local newStop = 0
     local shouldContinue = false
     local newBagAmount = 0
+    exports["cw-rep"]:updateSkill(src, "garbage", 5)
 
     if math.random(100) >= config.cryptoStickChance and config.giveCryptoStick then
         player.Functions.AddItem("cryptostick", 1, false)
@@ -131,7 +132,6 @@ RegisterNetEvent('garbagejob:server:PayShift', function(continue)
         if depositPay == 0 then
             payoutDeposit = ""
         end
-
         player.Functions.AddMoney("bank", totalToPay , 'garbage-payslip')
         TriggerClientEvent('QBCore:Notify', src, Lang:t("success.pay_slip", {total = totalToPay, deposit = payoutDeposit}), "success")
         routes[citizenId] = nil
