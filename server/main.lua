@@ -133,6 +133,7 @@ RegisterNetEvent('garbagejob:server:PayShift', function(continue)
             payoutDeposit = ""
         end
         player.Functions.AddMoney("bank", totalToPay , 'garbage-payslip')
+        exports["cw-rep"]:updateSkill(src, "garbage", 5)
         TriggerClientEvent('QBCore:Notify', src, Lang:t("success.pay_slip", {total = totalToPay, deposit = payoutDeposit}), "success")
         routes[citizenId] = nil
     else

@@ -1,5 +1,5 @@
 return {
-    useTarget = GetConvar('UseTarget', 'false') == 'true',
+    useTarget = true,
     peds = {
         {
             model = 's_m_y_garbage',

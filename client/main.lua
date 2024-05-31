@@ -70,6 +70,10 @@ local function LoadAnimation(dict)
 end
 
 local function BringBackCar()
+    if garbageVehicle then
+        local plate = GetVehicleNumberPlateText(garbageVehicle)
+        TriggerServerEvent('mm_carkeys:server:removevehiclekeys', plate)
+    end
     DeleteVehicle(garbageVehicle)
     if endBlip then
         RemoveBlip(endBlip)
@@ -354,7 +358,7 @@ local function CreateZone(x, y, z)
                     listen = true
                     RunWorkLoop()
                 end
-                SetVehicleDoorOpen(garbageVehicle,5,false,false)
+                -- SetVehicleDoorOpen(garbageVehicle, 5, false, false)
             else
                 if not config.useTarget then
                     lib.hideTextUI()
@@ -412,49 +416,101 @@ local function Listen4Control()
 end
 
 local pedsSpawned = false
+local cargoPed
+
 local function spawnPeds()
-    if not config.peds or not next(config.peds) or pedsSpawned then return end
     for i = 1, #config.peds do
         local current = config.peds[i]
-        current.model = type(current.model) == 'string' and joaat(current.model) or current.model
-        RequestModel(current.model)
-        while not HasModelLoaded(current.model) do
-            Wait(0)
-        end
-        local ped = CreatePed(0, current.model, current.coords.x, current.coords.y, current.coords.z, current.coords.w, false, false)
-        FreezeEntityPosition(ped, true)
-        SetEntityInvincible(ped, true)
-        SetBlockingOfNonTemporaryEvents(ped, true)
-        current.pedHandle = ped
-
-        if config.useTarget then
-            exports['qb-target']:AddTargetEntity(ped, {
-                options = {{type = "client", event = "qb-garbagejob:client:MainMenu", label = Lang:t("target.talk"), icon = 'fa-solid fa-recycle', job = "garbage",}},
-                distance = 2.0
-            })
-        else
-            local options = current.zoneOptions
-            if options then
-                local zone = BoxZone:Create(current.coords.xyz, options.length, options.width, {
-                    name = "zone_cityhall_" .. ped,
-                    heading = current.coords.w,
-                    debugPoly = false
-                })
-                zone:onPlayerInOut(function(inside)
-                    if LocalPlayer.state.isLoggedIn then
-                        if inside then
-                            lib.showTextUI(Lang:t("info.talk"))
-                            Listen4Control()
-                        else
-                            ControlListen = false
-                            lib.hideTextUI()
-                        end
-                    end
-                end)
-            end
-        end
+        cargoPed = exports['rep-talkNPC']:CreateNPC({
+            npc = current.model,
+            coords = vector3(current.coords.x, current.coords.y, current.coords.z),
+            heading = current.coords.w,
+            name = 'Seu Pedro',
+            tag = 'LIXEIRO',
+            animScenario = 'WORLD_HUMAN_CLIPBOARD',
+            color = "green",
+            startMSG = 'Ei, você aí, tá precisando de emprego?'
+        }, {
+            [1] = {
+                label = "Como funciona esse trabalho?",
+                shouldClose = false,
+                action = function()
+                    exports['rep-talkNPC']:changeDialog("🤔 Hm... **Você não me é estranho**.  \nDe toda forma, prazer, sou o 😃**Pedro Soares**!  \nMas pode me chamar de Seu Pedro.  \nVocê nunca trabalhou como 🚚📦 lixeiro?  \n**É fácil demais, só dirigir, coletar o lixo e voltar para receber o pagamento**. 💸  \nAinda tá aqui? Vai trabalhar! 💼👊", 
+                        {
+                            [1] = {
+                                label = "Entendido. Vamos trabalhar!",
+                                action = function()
+                                    garbageMenu()
+                                end
+                            },
+                            [2] = {
+                                label = "Ah sim... Talvez mais tarde.",
+                                shouldClose = true,
+                                action = function()
+                                end
+                            }
+                        })
+                end
+            },
+            [2] = {
+                label = "Trabalhar/Finalizar",
+                shouldClose = true,
+                action = function()
+                    garbageMenu()
+                end
+            },
+            [3] = {
+                label = "Talvez outra hora...",
+                shouldClose = true,
+                action = function()
+                end
+            }
+        })
     end
     pedsSpawned = true
+
+    -- if not config.peds or not next(config.peds) or pedsSpawned then return end
+    -- for i = 1, #config.peds do
+    --     local current = config.peds[i]
+    --     current.model = type(current.model) == 'string' and joaat(current.model) or current.model
+    --     RequestModel(current.model)
+    --     while not HasModelLoaded(current.model) do
+    --         Wait(0)
+    --     end
+    --     local ped = CreatePed(0, current.model, current.coords.x, current.coords.y, current.coords.z, current.coords.w, false, false)
+    --     FreezeEntityPosition(ped, true)
+    --     SetEntityInvincible(ped, true)
+    --     SetBlockingOfNonTemporaryEvents(ped, true)
+    --     current.pedHandle = ped
+
+    --     if config.useTarget then
+    --         exports['qb-target']:AddTargetEntity(ped, {
+    --             options = {{type = "client", event = "qb-garbagejob:client:MainMenu", label = Lang:t("target.talk"), icon = 'fa-solid fa-recycle', job = "garbage",}},
+    --             distance = 2.0
+    --         })
+    --     else
+    --         local options = current.zoneOptions
+    --         if options then
+    --             local zone = BoxZone:Create(current.coords.xyz, options.length, options.width, {
+    --                 name = "zone_cityhall_" .. ped,
+    --                 heading = current.coords.w,
+    --                 debugPoly = false
+    --             })
+    --             zone:onPlayerInOut(function(inside)
+    --                 if LocalPlayer.state.isLoggedIn then
+    --                     if inside then
+    --                         lib.showTextUI(Lang:t("info.talk"))
+    --                         Listen4Control()
+    --                     else
+    --                         ControlListen = false
+    --                         lib.hideTextUI()
+    --                     end
+    --                 end
+    --             end)
+    --         end
+    --     end
+    -- end
+    -- pedsSpawned = true
 end
 
 local function deletePeds()
