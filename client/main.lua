@@ -358,7 +358,7 @@ local function CreateZone(x, y, z)
                     listen = true
                     RunWorkLoop()
                 end
-                -- SetVehicleDoorOpen(garbageVehicle, 5, false, false)
+                SetVehicleDoorOpen(garbageVehicle, 5, false, false)
             else
                 if not config.useTarget then
                     lib.hideTextUI()
@@ -601,6 +601,8 @@ RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
 end)
 
 RegisterNetEvent('QBCore:Client:OnJobUpdate', function(JobInfo)
+    deletePeds()
+
     playerJob = JobInfo
     if garbageBlip then
         RemoveBlip(garbageBlip)
