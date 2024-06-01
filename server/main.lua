@@ -58,7 +58,7 @@ lib.callback.register("garbagejob:server:NextStop", function(source, currentStop
     local newStop = 0
     local shouldContinue = false
     local newBagAmount = 0
-    exports["cw-rep"]:updateSkill(src, "garbage", 5)
+    exports["cw-rep"]:updateSkill(source, "garbage", 5)
 
     if math.random(100) >= config.cryptoStickChance and config.giveCryptoStick then
         player.Functions.AddItem("cryptostick", 1, false)
