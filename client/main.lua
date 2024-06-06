@@ -595,6 +595,7 @@ RegisterNetEvent('qb-garbagejob:client:RequestPaycheck', function()
 end)
 
 RegisterNetEvent('QBCore:Client:OnPlayerLoaded', function()
+    deletePeds()
     playerJob = QBX.PlayerData.job
     setupClient()
     spawnPeds()
