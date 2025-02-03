@@ -413,6 +413,7 @@ function SetGarbageRoute()
 end
 
 local function spawnPeds()
+    if not config.peds or not pedsSpawned then return end
     for i = 1, #config.peds do
         local current = config.peds[i]
         current.model = type(current.model) == 'string' and joaat(current.model) or current.model
@@ -431,7 +432,7 @@ local function spawnPeds()
                 label = "Como funciona esse trabalho?",
                 shouldClose = false,
                 action = function()
-                    exports['rep-talkNPC']:changeDialog("🤔 Hm... **Você não me é estranho**.  \nDe toda forma, prazer, sou o 😃**Pedro Soares**!  \nMas pode me chamar de Seu Pedro.  \nVocê nunca trabalhou como 🚚📦 lixeiro?  \n**É fácil demais, só dirigir, coletar o lixo e voltar para receber o pagamento**. 💸  \nAinda tá aqui? Vai trabalhar! 💼👊", 
+                    exports['rep-talkNPC']:changeDialog("🤔 Hm... **Você não me é estranho**.  \nDe toda forma, prazer, sou o 😃**Pedro Soares**!  \nMas pode me chamar de Seu Pedro.  \nVocê nunca trabalhou como 🚚📦 lixeiro?  \n**É fácil demais, só dirigir, coletar o lixo e voltar para receber o pagamento**. 💸  \nAinda tá aqui? Vai trabalhar! 💼👊",
                         {
                             [1] = {
                                 label = "Entendido. Vamos trabalhar!",
